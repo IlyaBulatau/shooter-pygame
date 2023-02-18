@@ -19,4 +19,6 @@ class Mob(pygame.sprite.Sprite):
             self.speed = random.randint(3, 6)
             self.rect[0] = random.randint(0, W - 20)
             self.rect[1] = random.randint(-120, -60)
+        
+
 

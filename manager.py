@@ -1,9 +1,4 @@
-import pygame 
-
 import sys
-
-from mob import Mob
-from gan import Gan
 
 class Maneger:
 
@@ -14,3 +9,5 @@ class Maneger:
         for mobs in mobs_sprite:
             if gan.rect.collidepoint(mobs.rect.center):
                 sys.exit() # TODO - поменять функцию выхода на анимацию проигрыша или минус жизни
+
+        

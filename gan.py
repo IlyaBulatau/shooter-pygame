@@ -1,6 +1,22 @@
 import pygame
 from constant import *
 
+
+class Shell(pygame.sprite.Sprite):
+    
+    def __init__(self, pos_x, pos_y):
+        super().__init__()
+        self.image = pygame.Surface((10, 30))
+        self.image.fill((0, 0, 255))
+        self.rect = self.image.get_rect()
+        self.rect.center = pos_x, pos_y
+        self.speed = 30
+    
+    def update(self):
+        self.rect.y -= self.speed
+        if self.rect.bottom < 0:
+            self.kill()
+
 class Gan(pygame.sprite.Sprite):
 
     def __init__(self, size):
@@ -24,24 +40,9 @@ class Gan(pygame.sprite.Sprite):
             self.rect.left = 0
         elif self.rect.right > W:
             self.rect.right = W
-    
-    def gamve_over(self):
-        ...
+            
+    def short(self, shell, shell_sprite):
+        shell = Shell(self.rect.centerx, self.rect.bottom)
+        shell_sprite.add(shell)
         
-    def short(self): # TODO - добавить возможность стрелять
-        ...
 
-class Shell(pygame.sprite.Sprite):
-    
-    def __init__(self, positions):
-        super().__init__()
-        self.image = pygame.Surface((10, 30))
-        self.rect = self.image.get_rect()
-        self.rect.center = positions
-        self.speed = 30
-    
-    def update(self):
-        if self.rect.bottom > 0:
-            self.rect.x += self.speed
-        else:
-            ...
