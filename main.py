@@ -48,6 +48,11 @@ def main():
         mobs_sprite.update()
         shell_sprite.update()
         manager.game_over(mobs_sprite, gan)
+        hits = pygame.sprite.groupcollide(mobs_sprite, shell_sprite, True, True)
+        for hit in hits:
+            m = Mob()
+            mobs_sprite.add(m)
+            
 
 if __name__ == '__main__':
     main()
