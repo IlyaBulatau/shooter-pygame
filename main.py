@@ -8,6 +8,7 @@ from mob import Mob
 
 # TODO - сделать разные цели за которые будут начилсятсься разщное колво очков
 # TODO - сделать что бы задний фон двигался, что бы был эффект полета впред
+# TODO - сделать наконец то главное меню
 class Manager:
 
     def __init__(self):
@@ -17,6 +18,14 @@ class Manager:
         self.rect = self.bg.get_rect()
         self.rect.midtop = (W//2, 0)
         self.score = 0
+        self.hitpoint = 3
+        self.mobs_sprite = pygame.sprite.Group()
+    
+    def up_mob(self):
+        for _ in range(12):
+            mob = Mob()
+            mobs_sprite.add(mob)
+
     
     def init_window(self):
         self.window.blit(self.bg, self.rect)
@@ -42,26 +51,36 @@ class Manager:
         return self.score
     
     def show_score(self):
-        font = pygame.font.SysFont('arial', 28)
+        font = pygame.font.SysFont('arial', 18)
         show_text = font.render(f'Kill score {self.score}', 3, (0, 255, 0))
         rect_text = show_text.get_rect()
         rect_text.midleft = 30, 30
         self.window.blit(show_text, rect_text)
-        pygame.display.flip()
 
     
     def game_over(self, mobs_sprite, gan):
-        for mobs in mobs_sprite:
-            if gan.rect.collidepoint(mobs.rect.center):
-                sys.exit() # TODO - поменять функцию выхода на анимацию проигрыша или минус жизни
+        hits = pygame.sprite.spritecollide(gan, mobs_sprite, True)
+        for hit in hits:
+            self.hitpoint -= 1
+            if self.hitpoint < 1:
+                sys.exit()
+            mob = Mob()
+            mobs_sprite.add(mob)
+         
 
-    def show(self): # TODO - сделать отображения жизни, меню с инструкцией и меню для начала игры 
-        ...
+    def show_hitpoint(self): # TODO - сделать отображения жизни, меню с инструкцией и меню для начала игры 
+        font = pygame.font.SysFont('arial', 18)
+        show_text = font.render(f'You hitpoint {self.hitpoint}', 3, (0, 255, 0))
+        rect_text = show_text.get_rect()
+        rect_text.midleft = W-100, 30
+        self.window.blit(show_text, rect_text)
+
     
     def run_game(self):
         self.init_window()
         self.init_sprite()
         self.show_score()
+        self.show_hitpoint()
         self.window_update()
 
 manager = Manager()
@@ -76,11 +95,6 @@ for _ in range(12):
     mobs_sprite.add(mob)
 shell = Shell(gan.rect.centerx, gan.rect.bottom)
 shell_sprite = pygame.sprite.Group()
-
-def run_game():
-    manager.show_score()
-    manager.init_window()
-    manager.init_sprite()
 
 pygame.init()
 
