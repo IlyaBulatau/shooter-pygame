@@ -10,4 +10,5 @@ class Maneger:
             if gan.rect.collidepoint(mobs.rect.center):
                 sys.exit() # TODO - поменять функцию выхода на анимацию проигрыша или минус жизни
 
-        
+    def show(self): # TODO - сделать отображения жизни, меню с инструкцией и меню для начала игры 
+        ...

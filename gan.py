@@ -45,4 +45,6 @@ class Gan(pygame.sprite.Sprite):
         shell = Shell(self.rect.centerx, self.rect.bottom)
         shell_sprite.add(shell)
         
+    def hitpoint(self): # TODO - сделать жизни
+        ...
 
