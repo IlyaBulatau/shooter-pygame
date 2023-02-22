@@ -141,7 +141,7 @@ class Manager:
 manager = Manager()
 
 gan_sprite = pygame.sprite.Group()
-gan = Gan((50, 50))
+gan = Gan()
 gan_sprite.add(gan)
 
 mobs_sprite = pygame.sprite.Group()

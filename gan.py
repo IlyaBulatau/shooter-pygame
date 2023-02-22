@@ -6,8 +6,7 @@ class Shell(pygame.sprite.Sprite):
     
     def __init__(self, pos_x, pos_y):
         super().__init__()
-        self.image = pygame.Surface((10, 30))
-        self.image.fill((255, 255, 0))
+        self.image = pygame.image.load(path_to_image.joinpath('frame1.png'))
         self.rect = self.image.get_rect()
         self.rect.center = pos_x, pos_y
         self.speed = 30
@@ -19,11 +18,10 @@ class Shell(pygame.sprite.Sprite):
 
 class Gan(pygame.sprite.Sprite):
 
-    def __init__(self, size):
+    def __init__(self):
         super().__init__()
-        self.size = size
-        self.image = pygame.Surface((size))
-        self.image.fill((255, 0, 0))
+        self.image = pygame.image.load(path_to_image.joinpath('gun.jpg'))
+        self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (W//2, H)
         self.speed = 15
