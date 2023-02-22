@@ -7,7 +7,7 @@ class Shell(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__()
         self.image = pygame.Surface((10, 30))
-        self.image.fill((0, 0, 255))
+        self.image.fill((255, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.center = pos_x, pos_y
         self.speed = 30

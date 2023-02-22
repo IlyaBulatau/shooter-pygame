@@ -2,33 +2,83 @@ import pygame
 
 import sys
 
-from constant import FPS, W, H
+from constant import FPS, W, H, path_to_image
 from gan import Gan, Shell
 from mob import Mob
 
 # TODO - сделать разные цели за которые будут начилсятсься разщное колво очков
-# TODO - сделать что бы задний фон двигался, что бы был эффект полета впред
-# TODO - сделать наконец то главное меню
+# TODO - сделать наконец то главное меню с инструкцией
+# TODO - после окончания игры сделать возможность начать новую
+
 class Manager:
 
     def __init__(self):
-        self.window = pygame.display.set_mode((W, H))
+        self.window = pygame.display.set_mode((W, H)) 
         self.clock = pygame.time.Clock()
-        self.bg = pygame.image.load('Gan/image/bmw.jpg')
-        self.rect = self.bg.get_rect()
-        self.rect.midtop = (W//2, 0)
+        self.image = pygame.image.load(path_to_image.joinpath('kosmos.jpg'))
+        self.rect = self.image.get_rect()
+        self.rect.center = W//2, H//2
+        self.img2 = pygame.image.load(path_to_image.joinpath('kosmos2.jpg'))
+        self.rect2 = self.img2.get_rect()
+        self.rect2.center = W//2, 0 - H//2
         self.score = 0
         self.hitpoint = 3
+        self.game_state = 'run'
         self.mobs_sprite = pygame.sprite.Group()
     
+    def game_cycle(self):
+        '''
+        цикл отслеживающий события
+        '''
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.game_state = 'stop'
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    gan.short(shell, shell_sprite)
+                elif event.key == pygame.K_q and self.game_state != 'pause':
+                    self.game_state = 'pause'
+                elif event.key == pygame.K_q and self.game_state != 'run':
+                    self.game_state = 'run'
+
+    def game_pause(self):
+        '''
+        отображения паузы в игре
+        '''
+        surf = pygame.Surface((W, H))
+        surf.fill((127, 127, 127))
+        surf.set_alpha(3)
+        font = pygame.font.SysFont('arial', 44)
+        text = font.render('Pause', True, (255, 0, 0))
+        rect = text.get_rect()
+        rect.center = W//2, H//2
+        self.window.blit(surf, (0, 0))
+        self.window.blit(text, rect)
+        pygame.display.flip()
+    
+    def bg_run(self):
+        '''
+        Передвижение фона 
+        '''
+        self.rect.bottom += 4
+        self.rect2.bottom += 4
+        if self.rect.top > H:
+            self.rect.center = W//2, 0 - H//2
+        if self.rect2.top > H:
+             self.rect2.center = W//2, 0 - H//2
+     
     def up_mob(self):
+        '''
+        создание мобов
+        '''
         for _ in range(12):
             mob = Mob()
             mobs_sprite.add(mob)
-
     
-    def init_window(self):
-        self.window.blit(self.bg, self.rect)
+    def window_init(self):
+        self.window.blit(self.image, self.rect)
+        self.window.blit(self.img2, self.rect2)
         gan_sprite.draw(self.window)
         mobs_sprite.draw(self.window)
         shell_sprite.draw(self.window)
@@ -36,7 +86,6 @@ class Manager:
     def window_update(self):
         pygame.display.update()
         self.clock.tick(FPS)
-
         
     def init_sprite(self):
         gan_sprite.update()
@@ -56,19 +105,17 @@ class Manager:
         rect_text = show_text.get_rect()
         rect_text.midleft = 30, 30
         self.window.blit(show_text, rect_text)
-
     
     def game_over(self, mobs_sprite, gan):
         hits = pygame.sprite.spritecollide(gan, mobs_sprite, True)
         for hit in hits:
             self.hitpoint -= 1
             if self.hitpoint < 1:
-                sys.exit()
+                self.game_state = 'stop'
             mob = Mob()
-            mobs_sprite.add(mob)
-         
+            mobs_sprite.add(mob)         
 
-    def show_hitpoint(self): # TODO - сделать отображения жизни, меню с инструкцией и меню для начала игры 
+    def show_hitpoint(self):
         font = pygame.font.SysFont('arial', 18)
         show_text = font.render(f'You hitpoint {self.hitpoint}', 3, (0, 255, 0))
         rect_text = show_text.get_rect()
@@ -77,11 +124,19 @@ class Manager:
 
     
     def run_game(self):
-        self.init_window()
-        self.init_sprite()
-        self.show_score()
-        self.show_hitpoint()
-        self.window_update()
+        if self.game_state == 'run':
+            self.game_cycle()
+            self.window_init()
+            self.init_sprite()
+            self.bg_run()
+            self.show_score()
+            self.show_hitpoint()
+            self.window_update()
+        elif self.game_state == 'stop':
+            sys.exit()
+        elif self.game_state == 'pause':
+            self.game_cycle()
+            self.game_pause()
 
 manager = Manager()
 
@@ -100,16 +155,7 @@ pygame.init()
 
 def main():
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    gan.short(shell, shell_sprite)
- 
-
-        manager.run_game()
+     manager.run_game()
             
 if __name__ == '__main__':
     main()
