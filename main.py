@@ -5,9 +5,9 @@ import sys
 from constant import FPS, W, H, path_to_image
 from gan import Gan, Shell
 from mob import Mob
+from menu import Menu
 
 # TODO - сделать разные цели за которые будут начилсятсься разщное колво очков
-# TODO - сделать наконец то главное меню с инструкцией
 # TODO - после окончания игры сделать возможность начать новую
 
 class Manager:
@@ -23,7 +23,7 @@ class Manager:
         self.rect2.center = W//2, 0 - H//2
         self.score = 0
         self.hitpoint = 3
-        self.game_state = 'run'
+        self.game_state = 'main'
         self.mobs_sprite = pygame.sprite.Group()
     
     def game_cycle(self):
@@ -32,15 +32,23 @@ class Manager:
         '''
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.game_state = 'stop'
+                sys.exit()
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     gan.short(shell, shell_sprite)
-                elif event.key == pygame.K_q and self.game_state != 'pause':
+                elif event.key == pygame.K_q and self.game_state != 'pause' and self.game_state != 'main':
                     self.game_state = 'pause'
-                elif event.key == pygame.K_q and self.game_state != 'run':
+                elif event.key == pygame.K_q and self.game_state != 'run' and self.game_state != 'main':
                     self.game_state = 'run'
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.game_state != 'run':
+                if menu.show_start_game().collidepoint(event.pos) and self.game_state != 'instruction':
+                    self.game_state = 'run'
+                elif menu.buttom_back_menu().collidepoint(event.pos):
+                    self.game_state = 'main' 
+                elif menu.show_instruction().collidepoint(event.pos):
+                    self.game_state = 'instruction'
 
     def game_pause(self):
         '''
@@ -132,11 +140,20 @@ class Manager:
             self.show_score()
             self.show_hitpoint()
             self.window_update()
-        elif self.game_state == 'stop':
-            sys.exit()
         elif self.game_state == 'pause':
             self.game_cycle()
             self.game_pause()
+        elif self.game_state == 'main':
+            self.game_cycle()
+            menu.show_start_game()
+            menu.show_instruction()
+            self.window_update()
+        elif self.game_state == 'instruction':
+            self.game_cycle()
+            menu.instructions()
+            self.window_update()
+        elif self.game_state == 'stop':
+            sys.exit()
 
 manager = Manager()
 
@@ -150,6 +167,7 @@ for _ in range(12):
     mobs_sprite.add(mob)
 shell = Shell(gan.rect.centerx, gan.rect.bottom)
 shell_sprite = pygame.sprite.Group()
+menu = Menu(manager.window)
 
 pygame.init()
 
@@ -159,4 +177,3 @@ def main():
             
 if __name__ == '__main__':
     main()
-

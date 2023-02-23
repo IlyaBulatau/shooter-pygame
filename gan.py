@@ -6,7 +6,8 @@ class Shell(pygame.sprite.Sprite):
     
     def __init__(self, pos_x, pos_y):
         super().__init__()
-        self.image = pygame.image.load(path_to_image.joinpath('frame1.png'))
+        self.model_path = 'frame1.png'
+        self.image = pygame.image.load(path_to_image.joinpath(self.model_path))
         self.rect = self.image.get_rect()
         self.rect.center = pos_x, pos_y
         self.speed = 30
