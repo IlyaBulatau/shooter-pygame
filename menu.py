@@ -29,7 +29,6 @@ class Menu:
         rect = text.get_rect()
         rect.center = W//2, H//4
         self.window.blit(text, rect)
-        
         return rect
     
     def show_instruction(self):
@@ -40,6 +39,17 @@ class Menu:
         text = font.render('Show Instruction', 30, (255, 0, 0))
         rect = text.get_rect()
         rect.center = W//2, H//3
+        self.window.blit(text, rect)
+        return rect
+
+    def show_change_gun_model(self):
+        '''
+        Предлагает поменять модельку пушки
+        '''
+        font = pygame.font.SysFont('arial', 30)
+        text = font.render('Change Gun Model', 1, (255, 0, 0))
+        rect = text.get_rect()
+        rect.center = W//2, H//2.5
         self.window.blit(text, rect)
         return rect
     
@@ -65,7 +75,23 @@ class Menu:
             self.window.blit(show, rect)
             space_line += 50
             
-            
+    def change_model(self):
+        self.window.fill((0, 0, 0))
+        self.buttom_back_menu()
+        models = ['model-1', 'model-2', 'model-3', 'model-4']
+        rects = []
+        space_line = 0
+        for model in models:
+            font = pygame.font.SysFont('arial', 30)
+            text = font.render(model, 1, (255, 0, 0))
+            rect = text.get_rect()
+            rect.center = W//2, H//2 + space_line
+            self.window.blit(text, rect)
+            space_line += 50
+            rects.append(rect)
+        return rects
+
+
     
     def show_best_result(self):
         '''
@@ -73,8 +99,3 @@ class Menu:
         '''
         ...
     
-    def show_change_gun_model(self):
-        '''
-        Предлагает поменять модельку пушки
-        '''
-        ...

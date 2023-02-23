@@ -43,12 +43,18 @@ class Manager:
                     self.game_state = 'run'
 
             elif event.type == pygame.MOUSEBUTTONDOWN and self.game_state != 'run':
-                if menu.show_start_game().collidepoint(event.pos) and self.game_state != 'instruction':
+                if menu.show_start_game().collidepoint(event.pos) and self.game_state != 'instruction' and self.game_state != 'change-model':
                     self.game_state = 'run'
                 elif menu.buttom_back_menu().collidepoint(event.pos):
                     self.game_state = 'main' 
-                elif menu.show_instruction().collidepoint(event.pos):
+                elif menu.show_instruction().collidepoint(event.pos) and self.game_state != 'change-model':
                     self.game_state = 'instruction'
+                elif menu.show_change_gun_model().collidepoint(event.pos) and self.game_state != 'instruction':
+                    self.game_state = 'change-model'
+                elif menu.change_model()[0].collidepoint(event.pos) and self.game_state == 'change-model':
+                    shell.model_path = 'snake.png'
+
+                    
 
     def game_pause(self):
         '''
@@ -147,10 +153,15 @@ class Manager:
             self.game_cycle()
             menu.show_start_game()
             menu.show_instruction()
+            menu.show_change_gun_model()
             self.window_update()
         elif self.game_state == 'instruction':
             self.game_cycle()
             menu.instructions()
+            self.window_update()
+        elif self.game_state == 'change-model':
+            self.game_cycle()
+            menu.change_model()
             self.window_update()
         elif self.game_state == 'stop':
             sys.exit()
