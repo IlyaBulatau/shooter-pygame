@@ -9,7 +9,8 @@ from menu import Menu
 
 # TODO - сделать разные цели за которые будут начилсятсься разщное колво очков
 # TODO - после окончания игры сделать возможность начать новую
-
+# TODO - доделать выбор модели пушки
+# TODO - сделать что бы в течении игры скорость движение мобов увеличивалась
 class Manager:
 
     def __init__(self):
@@ -52,8 +53,10 @@ class Manager:
                 elif menu.show_change_gun_model().collidepoint(event.pos) and self.game_state != 'instruction':
                     self.game_state = 'change-model'
                 elif menu.change_model()[0].collidepoint(event.pos) and self.game_state == 'change-model':
-                    shell.model_path = 'snake.png'
-
+                    gan.first_model()
+                elif menu.change_model()[1].collidepoint(event.pos) and self.game_state == 'change-model':
+                    gan.second_model()       
+                    
                     
 
     def game_pause(self):

@@ -76,6 +76,9 @@ class Menu:
             space_line += 50
             
     def change_model(self):
+        '''
+        Выбор модели пушки
+        '''
         self.window.fill((0, 0, 0))
         self.buttom_back_menu()
         models = ['model-1', 'model-2', 'model-3', 'model-4']

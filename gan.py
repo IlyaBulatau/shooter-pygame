@@ -1,4 +1,7 @@
 import pygame
+import importlib
+import pathlib
+
 from constant import *
 
 
@@ -21,7 +24,10 @@ class Gan(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load(path_to_image.joinpath('gun.jpg'))
+        file = open(pathlib.Path(__file__).parent.resolve().joinpath('model.txt'), 'r')
+        for line in file:
+            self.model_path = line
+        self.image = pygame.image.load(path_to_image.joinpath(self.model_path))
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (W//2, H)
@@ -44,6 +50,28 @@ class Gan(pygame.sprite.Sprite):
         shell = Shell(self.rect.centerx, self.rect.bottom)
         shell_sprite.add(shell)
         
-    def hitpoint(self): # TODO - сделать жизни
-        ...
-
+    def first_model(self):
+        '''
+        Выбирает название файла для смены пушки
+        '''
+        file = open(path_to_textfile_model_gan, 'r')
+        for line in file:
+            file = open(path_to_textfile_model_gan, 'w')
+            file.write('gun.jpg')
+            self.model_path = line
+        file.close()
+        
+    
+    def second_model(self):
+        '''
+        Выбирает название файла для смены пушки
+        '''
+        file = open(path_to_textfile_model_gan, 'r')
+        for line in file:
+            file = open(path_to_textfile_model_gan, 'w')
+            file.write('snake.png') 
+            self.model_path = line
+        file.close()
+        
+ 
+        
