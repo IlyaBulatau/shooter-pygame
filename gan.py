@@ -1,9 +1,6 @@
 import pygame
-import importlib
-import pathlib
 
 from constant import *
-
 
 class Shell(pygame.sprite.Sprite):
     
@@ -24,9 +21,7 @@ class Gan(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        file = open(pathlib.Path(__file__).parent.resolve().joinpath('model.txt'), 'r')
-        for line in file:
-            self.model_path = line
+        self.model_path = 'gun.jpg'
         self.image = pygame.image.load(path_to_image.joinpath(self.model_path))
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
@@ -54,24 +49,26 @@ class Gan(pygame.sprite.Sprite):
         '''
         Выбирает название файла для смены пушки
         '''
-        file = open(path_to_textfile_model_gan, 'r')
-        for line in file:
-            file = open(path_to_textfile_model_gan, 'w')
-            file.write('gun.jpg')
-            self.model_path = line
-        file.close()
-        
-    
+
+        self.image = pygame.image.load(path_to_image.joinpath('gun.jpg'))
+           
     def second_model(self):
         '''
         Выбирает название файла для смены пушки
         '''
-        file = open(path_to_textfile_model_gan, 'r')
-        for line in file:
-            file = open(path_to_textfile_model_gan, 'w')
-            file.write('snake.png') 
-            self.model_path = line
-        file.close()
+        self.image = pygame.image.load(path_to_image.joinpath('snake.png'))
+    
+    def third_model(self):
+        '''
+        Выбирает название файла для смены пушки
+        '''
+        self.image = pygame.image.load(path_to_image.joinpath('gun2.jpg'))
+
+    def fourth_model(self):
+        '''
+        Выбирает название файла для смены пушки
+        '''
+        self.image = pygame.image.load(path_to_image.joinpath('gun3.png'))
         
  
         

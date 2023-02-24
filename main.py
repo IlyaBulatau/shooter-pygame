@@ -9,8 +9,9 @@ from menu import Menu
 
 # TODO - сделать разные цели за которые будут начилсятсься разщное колво очков
 # TODO - после окончания игры сделать возможность начать новую
-# TODO - доделать выбор модели пушки
 # TODO - сделать что бы в течении игры скорость движение мобов увеличивалась
+#TODO - добавить кнопку во время игры для выхода в главное меню
+#TODO - рендеринг
 class Manager:
 
     def __init__(self):
@@ -52,12 +53,24 @@ class Manager:
                     self.game_state = 'instruction'
                 elif menu.show_change_gun_model().collidepoint(event.pos) and self.game_state != 'instruction':
                     self.game_state = 'change-model'
-                elif menu.change_model()[0].collidepoint(event.pos) and self.game_state == 'change-model':
-                    gan.first_model()
-                elif menu.change_model()[1].collidepoint(event.pos) and self.game_state == 'change-model':
-                    gan.second_model()       
+                self.model_gun(event)    
                     
-                    
+    def model_gun(self, event):
+        '''
+        Отвечает за выбор модели пушки при нажатии мышкой по ней
+        '''
+        if menu.change_model()[0].collidepoint(event.pos) and self.game_state == 'change-model':
+            gan.first_model()
+            self.game_state = 'run'
+        elif menu.change_model()[1].collidepoint(event.pos) and self.game_state == 'change-model':
+            gan.second_model()     
+            self.game_state = 'run'  
+        elif menu.change_model()[2].collidepoint(event.pos) and self.game_state == 'change-model':
+            gan.third_model()     
+            self.game_state = 'run'  
+        elif menu.change_model()[3].collidepoint(event.pos) and self.game_state == 'change-model':
+            gan.fourth_model()     
+            self.game_state = 'run'  
 
     def game_pause(self):
         '''
