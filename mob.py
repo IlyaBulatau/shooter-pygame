@@ -11,15 +11,16 @@ class Mob(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (random.randint(0, W - 40),
                              random.randint(-120, -60))
-        self.speed = random.randint(5, 6)
+        self.speed = random.randint(9, 12)
     
     def update(self):
         if self.rect[1] < H:
             self.rect[1] += self.speed
         else:
-            self.speed = random.randint(5, 6)
+            self.speed = random.randint(9, 12)
             self.rect[0] = random.randint(0, W - 40)
             self.rect[1] = random.randint(-120, -60)
-        
     
+        
+
 

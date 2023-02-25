@@ -1,5 +1,5 @@
 import pygame
-
+import random
 import sys
 
 from constant import FPS, W, H, path_to_image
@@ -7,9 +7,8 @@ from gan import Gan, Shell
 from mob import Mob
 from menu import Menu
 
-# TODO - сделать разные цели за которые будут начилсятсься разщное колво очков
+# TODO - сделать уровни
 # TODO - после окончания игры сделать возможность начать новую
-# TODO - сделать что бы в течении игры скорость движение мобов увеличивалась
 #TODO - добавить кнопку во время игры для выхода в главное меню
 #TODO - рендеринг
 class Manager:
@@ -26,8 +25,31 @@ class Manager:
         self.score = 0
         self.hitpoint = 3
         self.game_state = 'main'
-        self.mobs_sprite = pygame.sprite.Group()
+        self.timer = pygame.time.get_ticks()
     
+    def up_speed_mobs(self, x, y):
+        for mob in mobs_sprite:
+            mob.speed = random.randint(x, y)
+
+
+    def game_timer(self):
+        #TODO - сделать таймер времязависимым и отображать его во время игры
+        '''
+        Функция увеличивает скорость мобов со временем игры
+        '''
+        self.timer
+        self.timer += 1
+        if 500 < self.timer < 900:
+           self.up_speed_mobs(11, 14)
+        elif 900 < self.timer < 1300:
+            self.up_speed_mobs(13, 16)
+        elif 1300 < self.timer < 1600:
+            self.up_speed_mobs(15, 19)
+        elif 1600 < self.timer < 2000:
+            self.up_speed_mobs(18, 22)
+        elif 2000 < self.timer:
+            self.up_speed_mobs(21, 25)
+        
     def game_cycle(self):
         '''
         цикл отслеживающий события
@@ -53,24 +75,24 @@ class Manager:
                     self.game_state = 'instruction'
                 elif menu.show_change_gun_model().collidepoint(event.pos) and self.game_state != 'instruction':
                     self.game_state = 'change-model'
-                self.model_gun(event)    
-                    
+                self.model_gun(event)  
+                                
     def model_gun(self, event):
         '''
         Отвечает за выбор модели пушки при нажатии мышкой по ней
         '''
         if menu.change_model()[0].collidepoint(event.pos) and self.game_state == 'change-model':
             gan.first_model()
-            self.game_state = 'run'
+
         elif menu.change_model()[1].collidepoint(event.pos) and self.game_state == 'change-model':
             gan.second_model()     
-            self.game_state = 'run'  
+
         elif menu.change_model()[2].collidepoint(event.pos) and self.game_state == 'change-model':
             gan.third_model()     
-            self.game_state = 'run'  
+
         elif menu.change_model()[3].collidepoint(event.pos) and self.game_state == 'change-model':
             gan.fourth_model()     
-            self.game_state = 'run'  
+
 
     def game_pause(self):
         '''
@@ -91,21 +113,13 @@ class Manager:
         '''
         Передвижение фона 
         '''
-        self.rect.bottom += 4
-        self.rect2.bottom += 4
+        self.rect.bottom += 8
+        self.rect2.bottom += 8
         if self.rect.top > H:
             self.rect.center = W//2, 0 - H//2
         if self.rect2.top > H:
              self.rect2.center = W//2, 0 - H//2
-     
-    def up_mob(self):
-        '''
-        создание мобов
-        '''
-        for _ in range(12):
-            mob = Mob()
-            mobs_sprite.add(mob)
-    
+         
     def window_init(self):
         self.window.blit(self.image, self.rect)
         self.window.blit(self.img2, self.rect2)
@@ -118,6 +132,9 @@ class Manager:
         self.clock.tick(FPS)
         
     def init_sprite(self):
+        '''
+        Отслеживает убийства мобов
+        '''
         gan_sprite.update()
         mobs_sprite.update()
         shell_sprite.update()
@@ -137,6 +154,9 @@ class Manager:
         self.window.blit(show_text, rect_text)
     
     def game_over(self, mobs_sprite, gan):
+        '''
+        Отслеживает столкновение мобов с пушкой
+        '''
         hits = pygame.sprite.spritecollide(gan, mobs_sprite, True)
         for hit in hits:
             self.hitpoint -= 1
@@ -155,6 +175,7 @@ class Manager:
     
     def run_game(self):
         if self.game_state == 'run':
+            self.game_timer()
             self.game_cycle()
             self.window_init()
             self.init_sprite()
@@ -180,7 +201,14 @@ class Manager:
             menu.change_model()
             self.window_update()
         elif self.game_state == 'stop':
-            sys.exit()
+            self.game_state = 'main'
+            self.score = 0
+            self.hitpoint = 3
+            self.timer = 0
+
+            
+
+
 
 manager = Manager()
 
