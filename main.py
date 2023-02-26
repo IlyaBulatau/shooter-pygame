@@ -243,12 +243,25 @@ class Manager:
     
     def run_game(self):
         if self.game_state == 'run':
-            self.game_timer()
-            self.game_cycle()
-            self.window_init()
-            self.init_sprite()
-            self.bg_run()
-            self.window_update()
+            if self.level == 1:
+                self.game_timer()
+                self.game_cycle()
+                self.window_init()
+                self.init_sprite()
+                self.bg_run()
+                self.window_update()
+            elif self.level == 2:
+                self.game_timer()
+                self.game_cycle()
+                leve2.window_init()
+                self.init_sprite()
+                self.bg_run()
+                self.window_update()
+
+            elif self.level == 3:
+                ...
+            elif self.level == 4:
+                ...
         elif self.game_state == 'pause':
             self.game_cycle()
             self.game_pause()
@@ -274,6 +287,33 @@ class Manager:
         elif self.game_state == 'stop': # если игра закончилась
             self.new_game()
 
+
+class LevelTwo(Mob, Manager):
+
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load(path_to_image.joinpath('shiplevel2.png')) 
+        
+    def new_image(self):
+        for mob in mobs_sprite:
+            mob.image = self.image
+    
+    def window_init(self):
+        '''
+        Функция рисует все обьекты во время игры когда game_state = run
+        '''
+        manager.window.blit(manager.image, manager.rect)
+        manager.window.blit(manager.img2, manager.rect2)
+        gan_sprite.draw(manager.window)
+        self.new_image()
+        mobs_sprite.draw(manager.window)
+        shell_sprite.draw(manager.window)
+        manager.show_menu_exit_button()
+        manager.show_score()
+        manager.show_hitpoint()
+        manager.show_timer()
+
+
 manager = Manager()
 
 gan_sprite = pygame.sprite.Group()
@@ -289,7 +329,7 @@ shell = Shell(gan.rect.centerx, gan.rect.bottom)
 shell_sprite = pygame.sprite.Group()
 
 menu = Menu(manager.window)
-
+leve2 = LevelTwo()
 def main():
     while True:
      manager.run_game()
