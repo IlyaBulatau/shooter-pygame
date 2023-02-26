@@ -2,15 +2,19 @@ import pygame
 
 import random
 import sys
-import time
 
 from constant import FPS, W, H, path_to_image
 from gan import Gan, Shell
 from mob import Mob
 from menu import Menu
 
-# TODO - сделать уровни
+# TODO - сделать систему уровней:
+# - первый уровень обычная игра
+# - второй меньше мобов, добавить мобов которые могут стрелять
+# - третий больше мобов которые чаще стреляют + леетящие навстречу аптечки
+# - четверты у мобов несколько жизней, супер мобы при столкновении с которыми сразу умираешь, летящий кейс который, при подборе, уничтожает всех мобов на карте
 #TODO - рендеринг
+
 
 pygame.init()
 class Manager:
@@ -31,6 +35,7 @@ class Manager:
         self.game_state = 'main' # состояние игры
         self.timer = pygame.time.get_ticks() # таймер отслеживания времени для увеличения скорости мобов
         self.font = pygame.font.SysFont('arial', 18)
+        self.level = 1
     
     def show_menu_exit_button(self):
         '''
@@ -51,12 +56,10 @@ class Manager:
         for mob in mobs_sprite:
             mob.speed = random.randint(x, y)
 
-
     def game_timer(self):
         '''
         Функция увеличивает скорость мобов со временем игры
         '''
-        
         self.timer += 1
         if 500 < self.timer < 900:
            self.up_speed_mobs(11, 14)
@@ -93,20 +96,35 @@ class Manager:
                 elif event.key == pygame.K_q and self.game_state != 'run' and self.game_state != 'main':
                     self.game_state = 'run'
             # события мыши не во время игры
-            elif event.type == pygame.MOUSEBUTTONDOWN and self.game_state != 'run':
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.game_state != 'run' and self.game_state != 'pause':
                 if menu.show_start_game().collidepoint(event.pos) and self.game_state != 'instruction' and self.game_state != 'change-model':
                     self.game_state = 'run'
                 elif menu.buttom_back_menu().collidepoint(event.pos):
                     self.game_state = 'main' 
-                elif menu.show_instruction().collidepoint(event.pos) and self.game_state != 'change-model':
+                elif menu.show_instruction().collidepoint(event.pos) and self.game_state != 'change-model' and self.game_state != 'level-select':
                     self.game_state = 'instruction'
-                elif menu.show_change_gun_model().collidepoint(event.pos) and self.game_state != 'instruction':
+                elif menu.show_change_gun_model().collidepoint(event.pos) and self.game_state != 'instruction' and self.game_state != 'level-select':
                     self.game_state = 'change-model'
-                self.model_gun(event)  
+                elif menu.show_level_select().collidepoint(event.pos) and self.game_state != 'change-model' and self.game_state != 'instruction':
+                    self.game_state = 'level-select'
+                self.model_gun(event)
+                self.choose_level(event)  
             # события мыши во время игры
             elif event.type == pygame.MOUSEBUTTONDOWN and self.game_state == 'run' and self.show_menu_exit_button().collidepoint(event.pos):
                     self.game_state = 'stop'
-
+    
+    def choose_level(self, event):
+        '''
+        Отвечает за выбор уровня при нажатии мышкой
+        '''
+        if menu.level_selected()[0].collidepoint(event.pos) and self.game_state == 'level-select':
+            self.level = 1
+        elif menu.level_selected()[1].collidepoint(event.pos) and self.game_state == 'level-select':
+            self.level = 2
+        elif menu.level_selected()[2].collidepoint(event.pos) and self.game_state == 'level-select':
+            self.level = 3
+        elif menu.level_selected()[3].collidepoint(event.pos) and self.game_state == 'level-select':
+            self.level = 4
                                 
     def model_gun(self, event):
         '''
@@ -123,7 +141,6 @@ class Manager:
 
         elif menu.change_model()[3].collidepoint(event.pos) and self.game_state == 'change-model':
             gan.fourth_model()     
-
 
     def game_pause(self):
         '''
@@ -240,6 +257,7 @@ class Manager:
             menu.show_start_game()
             menu.show_instruction()
             menu.show_change_gun_model()
+            menu.show_level_select()
             self.window_update()
         elif self.game_state == 'instruction':
             self.game_cycle()
@@ -249,12 +267,12 @@ class Manager:
             self.game_cycle()
             menu.change_model()
             self.window_update()
+        elif self.game_state == 'level-select':
+            self.game_cycle()
+            menu.level_selected()
+            self.window_update()
         elif self.game_state == 'stop': # если игра закончилась
             self.new_game()
-
-            
-
-
 
 manager = Manager()
 

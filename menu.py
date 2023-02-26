@@ -94,12 +94,34 @@ class Menu:
             space_line += 50
             rects.append(rect)
         return rects
-
-
     
-    def show_best_result(self):
+    def show_level_select(self):
         '''
-        Предлагает просмотреть результаты
+        Предлагает выбрать уровень игры
         '''
-        ...
+        font = self.font
+        text = font.render('Select Game Level', 1, (255, 0, 0))
+        rect = text.get_rect()
+        rect.center = W//2, H//2 - 20
+        self.window.blit(text, rect)
+        return rect
+
+    def level_selected(self):
+        self.window.fill((0, 0, 0))
+        self.buttom_back_menu()
+        levels = ['level-1', 'level-2', 'level-3', 'level-4']
+        rects = []
+        space_line = 0
+        for level in levels:
+            font = self.font
+            text = font.render(level, 1, (255, 0, 0))
+            rect = text.get_rect()
+            rect.center = W//2, H//2 + space_line
+            self.window.blit(text, rect)
+            space_line += 50
+            rects.append(rect)
+        return rects
+
+
+        
     
