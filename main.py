@@ -1,16 +1,18 @@
 import pygame
+
 import random
 import sys
 import time
+
 from constant import FPS, W, H, path_to_image
 from gan import Gan, Shell
 from mob import Mob
 from menu import Menu
 
 # TODO - сделать уровни
-#TODO - добавить кнопку во время игры для выхода в главное меню
 #TODO - рендеринг
-#TODO - сделать шрифты отдельной константой
+
+pygame.init()
 class Manager:
     '''
     Класс отвечающий за процесс игры
@@ -28,7 +30,20 @@ class Manager:
         self.hitpoint = 3 # жизни
         self.game_state = 'main' # состояние игры
         self.timer = pygame.time.get_ticks() # таймер отслеживания времени для увеличения скорости мобов
+        self.font = pygame.font.SysFont('arial', 18)
     
+    def show_menu_exit_button(self):
+        '''
+        Отображает кнопку для выхода в главное меню из игры
+        '''
+        surf = pygame.Surface((50, 50))
+        surf.fill((127, 127, 127))
+        surf.set_alpha(150)
+        rect = surf.get_rect()
+        rect.bottomleft = 30, H - 20
+        self.window.blit(surf, rect)
+        return rect
+
     def up_speed_mobs(self, x, y):
         '''
         Увеличивает скорость мобов в пределах от х до у
@@ -38,7 +53,6 @@ class Manager:
 
 
     def game_timer(self):
-        #TODO - сделать таймер времязависимым и отображать его во время игры
         '''
         Функция увеличивает скорость мобов со временем игры
         '''
@@ -57,7 +71,7 @@ class Manager:
         return self.timer
     
     def show_timer(self):
-        font = pygame.font.SysFont('arial', 18)
+        font = self.font
         text = font.render(f'Game Time - {round(self.timer//30-4)}', 1, (0, 255, 0))
         rect = text.get_rect()
         rect.center = W//2, 30
@@ -78,7 +92,7 @@ class Manager:
                     self.game_state = 'pause'
                 elif event.key == pygame.K_q and self.game_state != 'run' and self.game_state != 'main':
                     self.game_state = 'run'
-
+            # события мыши не во время игры
             elif event.type == pygame.MOUSEBUTTONDOWN and self.game_state != 'run':
                 if menu.show_start_game().collidepoint(event.pos) and self.game_state != 'instruction' and self.game_state != 'change-model':
                     self.game_state = 'run'
@@ -89,6 +103,10 @@ class Manager:
                 elif menu.show_change_gun_model().collidepoint(event.pos) and self.game_state != 'instruction':
                     self.game_state = 'change-model'
                 self.model_gun(event)  
+            # события мыши во время игры
+            elif event.type == pygame.MOUSEBUTTONDOWN and self.game_state == 'run' and self.show_menu_exit_button().collidepoint(event.pos):
+                    self.game_state = 'stop'
+
                                 
     def model_gun(self, event):
         '''
@@ -134,11 +152,19 @@ class Manager:
              self.rect2.center = W//2, 0 - H//2
          
     def window_init(self):
+        '''
+        Функция рисует все обьекты во время игры когда game_state = run
+        '''
         self.window.blit(self.image, self.rect)
         self.window.blit(self.img2, self.rect2)
         gan_sprite.draw(self.window)
         mobs_sprite.draw(self.window)
         shell_sprite.draw(self.window)
+        self.show_menu_exit_button()
+        self.show_score()
+        self.show_hitpoint()
+        self.show_timer()
+
         
     def window_update(self):
         pygame.display.update()
@@ -160,7 +186,7 @@ class Manager:
         return self.score
     
     def show_score(self):
-        font = pygame.font.SysFont('arial', 18)
+        font = self.font
         show_text = font.render(f'Kill score {self.score}', 3, (0, 255, 0))
         rect_text = show_text.get_rect()
         rect_text.midleft = 30, 30
@@ -179,12 +205,24 @@ class Manager:
             mobs_sprite.add(mob)         
 
     def show_hitpoint(self):
-        font = pygame.font.SysFont('arial', 18)
+        font = self.font
         show_text = font.render(f'You hitpoint {self.hitpoint}', 3, (0, 255, 0))
         rect_text = show_text.get_rect()
         rect_text.midleft = W-100, 30
         self.window.blit(show_text, rect_text)
-
+    
+    def new_game(self):
+        '''
+        Функция обновляет все характеристики для новой игры(скорость мобов, их появления, HP, счетчик киллов, и время)
+        '''
+        self.game_state = 'main' # статус игры изменяется для отправки на главное меню
+        self.score = 0 # счет становиться 0
+        self.hitpoint = 3 # обновляется ХП
+        self.timer = 120 # обнуляеться таймер
+        for mob in mobs_sprite: # обновляется позиция мобов
+            mob.rect.topleft = (random.randint(0, W - 40),
+                                 random.randint(-120, -60))
+        self.up_speed_mobs(9, 12) # при запуске новой игры если отсались мобы с прошлой их скорость скидывается
     
     def run_game(self):
         if self.game_state == 'run':
@@ -193,9 +231,6 @@ class Manager:
             self.window_init()
             self.init_sprite()
             self.bg_run()
-            self.show_score()
-            self.show_hitpoint()
-            self.show_timer()
             self.window_update()
         elif self.game_state == 'pause':
             self.game_cycle()
@@ -215,14 +250,7 @@ class Manager:
             menu.change_model()
             self.window_update()
         elif self.game_state == 'stop': # если игра закончилась
-            self.game_state = 'main' # статус игры изменяется для отправки на главное меню
-            self.score = 0 # счет становиться 0
-            self.hitpoint = 3 # обновляется ХП
-            self.timer = 120 # обнуляеться таймер
-            for mob in mobs_sprite: # обновляется позиция мобов
-                mob.rect.topleft = (random.randint(0, W - 40),
-                                 random.randint(-120, -60))
-            self.up_speed_mobs(9, 12) # при запуске новой игры если отсались мобы с прошлой их скорость скидывается
+            self.new_game()
 
             
 
@@ -238,11 +266,11 @@ mobs_sprite = pygame.sprite.Group()
 for _ in range(12):
     mob = Mob()
     mobs_sprite.add(mob)
+
 shell = Shell(gan.rect.centerx, gan.rect.bottom)
 shell_sprite = pygame.sprite.Group()
-menu = Menu(manager.window)
 
-pygame.init()
+menu = Menu(manager.window)
 
 def main():
     while True:

@@ -25,7 +25,7 @@ class Gan(pygame.sprite.Sprite):
         self.image = pygame.image.load(path_to_image.joinpath(self.model_path))
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (W//2, H)
+        self.rect.midbottom = (W//2, H-100)
         self.speed = 15
         self.hp = 3
     

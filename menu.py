@@ -6,6 +6,7 @@ class Menu:
 
     def __init__(self, window):
         self.window = window
+        self.font = pygame.font.SysFont('arial', 30)
     
     def buttom_back_menu(self):
         '''
@@ -24,7 +25,7 @@ class Menu:
         '''
         self.window.fill((0, 0, 0))
         self.buttom_back_menu()
-        font = pygame.font.SysFont('arial', 30)
+        font = self.font
         text = font.render('Start Game', 1, (255, 0, 0))
         rect = text.get_rect()
         rect.center = W//2, H//4
@@ -35,7 +36,7 @@ class Menu:
         '''
         Предлагает просмотреть инструкцию
         '''
-        font = pygame.font.SysFont('arial', 30)
+        font = self.font
         text = font.render('Show Instruction', 30, (255, 0, 0))
         rect = text.get_rect()
         rect.center = W//2, H//3
@@ -46,7 +47,7 @@ class Menu:
         '''
         Предлагает поменять модельку пушки
         '''
-        font = pygame.font.SysFont('arial', 30)
+        font = self.font
         text = font.render('Change Gun Model', 1, (255, 0, 0))
         rect = text.get_rect()
         rect.center = W//2, H//2.5
@@ -85,7 +86,7 @@ class Menu:
         rects = []
         space_line = 0
         for model in models:
-            font = pygame.font.SysFont('arial', 30)
+            font = self.font
             text = font.render(model, 1, (255, 0, 0))
             rect = text.get_rect()
             rect.center = W//2, H//2 + space_line
