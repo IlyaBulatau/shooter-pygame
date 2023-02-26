@@ -1,33 +1,38 @@
 import pygame
 import random
 import sys
-
+import time
 from constant import FPS, W, H, path_to_image
 from gan import Gan, Shell
 from mob import Mob
 from menu import Menu
 
 # TODO - сделать уровни
-# TODO - после окончания игры сделать возможность начать новую
 #TODO - добавить кнопку во время игры для выхода в главное меню
 #TODO - рендеринг
+#TODO - сделать шрифты отдельной константой
 class Manager:
-
+    '''
+    Класс отвечающий за процесс игры
+    '''
     def __init__(self):
-        self.window = pygame.display.set_mode((W, H)) 
-        self.clock = pygame.time.Clock()
-        self.image = pygame.image.load(path_to_image.joinpath('kosmos.jpg'))
+        self.window = pygame.display.set_mode((W, H))  # окно игры
+        self.clock = pygame.time.Clock() # таймер для фпс
+        self.image = pygame.image.load(path_to_image.joinpath('kosmos.jpg')) # 1 половина фона
         self.rect = self.image.get_rect()
         self.rect.center = W//2, H//2
-        self.img2 = pygame.image.load(path_to_image.joinpath('kosmos2.jpg'))
+        self.img2 = pygame.image.load(path_to_image.joinpath('kosmos2.jpg')) # 2 половина фона
         self.rect2 = self.img2.get_rect()
         self.rect2.center = W//2, 0 - H//2
-        self.score = 0
-        self.hitpoint = 3
-        self.game_state = 'main'
-        self.timer = pygame.time.get_ticks()
+        self.score = 0 # счет убийств
+        self.hitpoint = 3 # жизни
+        self.game_state = 'main' # состояние игры
+        self.timer = pygame.time.get_ticks() # таймер отслеживания времени для увеличения скорости мобов
     
     def up_speed_mobs(self, x, y):
+        '''
+        Увеличивает скорость мобов в пределах от х до у
+        '''
         for mob in mobs_sprite:
             mob.speed = random.randint(x, y)
 
@@ -37,7 +42,7 @@ class Manager:
         '''
         Функция увеличивает скорость мобов со временем игры
         '''
-        self.timer
+        
         self.timer += 1
         if 500 < self.timer < 900:
            self.up_speed_mobs(11, 14)
@@ -49,6 +54,14 @@ class Manager:
             self.up_speed_mobs(18, 22)
         elif 2000 < self.timer:
             self.up_speed_mobs(21, 25)
+        return self.timer
+    
+    def show_timer(self):
+        font = pygame.font.SysFont('arial', 18)
+        text = font.render(f'Game Time - {round(self.timer//30-4)}', 1, (0, 255, 0))
+        rect = text.get_rect()
+        rect.center = W//2, 30
+        self.window.blit(text, rect)
         
     def game_cycle(self):
         '''
@@ -182,6 +195,7 @@ class Manager:
             self.bg_run()
             self.show_score()
             self.show_hitpoint()
+            self.show_timer()
             self.window_update()
         elif self.game_state == 'pause':
             self.game_cycle()
@@ -200,11 +214,15 @@ class Manager:
             self.game_cycle()
             menu.change_model()
             self.window_update()
-        elif self.game_state == 'stop':
-            self.game_state = 'main'
-            self.score = 0
-            self.hitpoint = 3
-            self.timer = 0
+        elif self.game_state == 'stop': # если игра закончилась
+            self.game_state = 'main' # статус игры изменяется для отправки на главное меню
+            self.score = 0 # счет становиться 0
+            self.hitpoint = 3 # обновляется ХП
+            self.timer = 120 # обнуляеться таймер
+            for mob in mobs_sprite: # обновляется позиция мобов
+                mob.rect.topleft = (random.randint(0, W - 40),
+                                 random.randint(-120, -60))
+            self.up_speed_mobs(9, 12) # при запуске новой игры если отсались мобы с прошлой их скорость скидывается
 
             
 
