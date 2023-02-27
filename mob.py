@@ -12,6 +12,10 @@ class Mob(pygame.sprite.Sprite):
         self.rect.topleft = (random.randint(0, W - 40),
                              random.randint(-120, -60))
         self.speed = random.randint(9, 12)
+        self.shell = pygame.Surface((10, 25))
+        self.shell.fill((255, 255, 0))
+        self.rect_shell = self.shell.get_rect()
+        self.rect_shell.topleft = self.rect.bottomleft
     
     def update(self):
         if self.rect[1] < H:
@@ -21,6 +25,17 @@ class Mob(pygame.sprite.Sprite):
             self.rect[0] = random.randint(0, W - 40)
             self.rect[1] = random.randint(-120, -60)
     
-        
+    def shooting(self, window):
+        if self.rect[1] < H-200:
+            self.update_shell()
+            window.blit(self.shell, self.rect_shell)
+    
+    def update_shell(self):
+        if self.rect_shell[1] < H:
+            self.rect_shell.y += 12
+        else:
+            self.rect_shell.topleft = self.rect.bottomleft
+    
+    
 
 

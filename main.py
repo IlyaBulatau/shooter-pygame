@@ -35,8 +35,9 @@ class Manager:
         self.game_state = 'main' # состояние игры
         self.timer = pygame.time.get_ticks() # таймер отслеживания времени для увеличения скорости мобов
         self.font = pygame.font.SysFont('arial', 18)
-        self.level = 1
-    
+        self.level = 2
+        
+
     def show_menu_exit_button(self):
         '''
         Отображает кнопку для выхода в главное меню из игры
@@ -242,6 +243,7 @@ class Manager:
         self.up_speed_mobs(9, 12) # при запуске новой игры если отсались мобы с прошлой их скорость скидывается
     
     def run_game(self):
+        print(self.timer)
         if self.game_state == 'run':
             if self.level == 1:
                 self.game_timer()
@@ -251,13 +253,13 @@ class Manager:
                 self.bg_run()
                 self.window_update()
             elif self.level == 2:
-                self.game_timer()
+                leve2.game_timer()
                 self.game_cycle()
                 leve2.window_init()
+                leve2.create_mobs_shell()
                 self.init_sprite()
                 self.bg_run()
                 self.window_update()
-
             elif self.level == 3:
                 ...
             elif self.level == 4:
@@ -288,16 +290,25 @@ class Manager:
             self.new_game()
 
 
-class LevelTwo(Mob, Manager):
+class LevelTwo():
 
     def __init__(self):
-        super().__init__()
         self.image = pygame.image.load(path_to_image.joinpath('shiplevel2.png')) 
-        
+
+
     def new_image(self):
         for mob in mobs_sprite:
             mob.image = self.image
-    
+            
+    def create_mobs_shell(self):
+        for mob in mobs_sprite:
+            mob.shooting(manager.window)
+
+    def mobs_shooting(self):
+        for mob in mobs_sprite:
+            old_position = mob.rect.y
+            ...
+
     def window_init(self):
         '''
         Функция рисует все обьекты во время игры когда game_state = run
@@ -313,6 +324,33 @@ class LevelTwo(Mob, Manager):
         manager.show_hitpoint()
         manager.show_timer()
 
+    def up_speed_mobs(self, x, y):
+        '''
+        Увеличивает скорость мобов в пределах от х до у
+        '''
+        for mob in mobs_sprite:
+            mob.speed = random.randint(x, y)
+
+
+    def game_timer(self):
+        '''
+        Функция увеличивает скорость мобов со временем игры
+        '''
+        manager.timer += 1
+        if manager.timer < 500:
+            self.up_speed_mobs(5, 6)
+        elif 500 < manager.timer < 900:
+           self.up_speed_mobs(7, 8)
+        elif 900 < manager.timer < 1300:
+            self.up_speed_mobs(9, 12)
+        elif 1300 < manager.timer < 1600:
+            self.up_speed_mobs(13, 15)
+        elif 1600 < manager.timer < 2000:
+            self.up_speed_mobs(16, 19)
+        elif 2000 < manager.timer:
+            self.up_speed_mobs(20, 23)
+        return manager.timer
+
 
 manager = Manager()
 
@@ -321,15 +359,18 @@ gan = Gan()
 gan_sprite.add(gan)
 
 mobs_sprite = pygame.sprite.Group()
-for _ in range(12):
+
+for _ in range(8):
     mob = Mob()
     mobs_sprite.add(mob)
+
 
 shell = Shell(gan.rect.centerx, gan.rect.bottom)
 shell_sprite = pygame.sprite.Group()
 
 menu = Menu(manager.window)
 leve2 = LevelTwo()
+
 def main():
     while True:
      manager.run_game()
