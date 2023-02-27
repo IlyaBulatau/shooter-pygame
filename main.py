@@ -8,11 +8,9 @@ from gan import Gan, Shell
 from mob import Mob
 from menu import Menu
 
-# TODO - сделать систему уровней:
+#TODO
 # - первый уровень обычная игра
-# - второй меньше мобов, добавить мобов которые могут стрелять
-# - третий больше мобов которые чаще стреляют + леетящие навстречу аптечки
-# - четверты у мобов несколько жизней, супер мобы при столкновении с которыми сразу умираешь, летящий кейс который, при подборе, уничтожает всех мобов на карте
+# - второй меньше мобов, добавить мобов которые могут стрелять добавить аптечку  
 #TODO - рендеринг
 
 
@@ -220,7 +218,7 @@ class Manager:
             if self.hitpoint < 1:
                 self.game_state = 'stop'
             mob = Mob()
-            mobs_sprite.add(mob)         
+            mobs_sprite.add(mob) 
 
     def show_hitpoint(self):
         font = self.font
@@ -243,7 +241,6 @@ class Manager:
         self.up_speed_mobs(9, 12) # при запуске новой игры если отсались мобы с прошлой их скорость скидывается
     
     def run_game(self):
-        print(self.timer)
         if self.game_state == 'run':
             if self.level == 1:
                 self.game_timer()
@@ -254,6 +251,7 @@ class Manager:
                 self.window_update()
             elif self.level == 2:
                 leve2.game_timer()
+                leve2.hit_the_mobs_shell_in_gan()
                 self.game_cycle()
                 leve2.window_init()
                 leve2.create_mobs_shell()
@@ -297,17 +295,29 @@ class LevelTwo():
 
 
     def new_image(self):
+        '''
+        Меняет картинку мобов
+        '''
         for mob in mobs_sprite:
             mob.image = self.image
             
     def create_mobs_shell(self):
+        '''
+        Рисует пули мобов
+        '''
         for mob in mobs_sprite:
             mob.shooting(manager.window)
 
-    def mobs_shooting(self):
+    def hit_the_mobs_shell_in_gan(self):
+        '''
+        Отслеживает попадания пулей мобов в пушку и отнимает жизнь если это произошло
+        '''
         for mob in mobs_sprite:
-            old_position = mob.rect.y
-            ...
+            if gan.rect.collidepoint(mob.rect_shell.center):
+                mob.rect_shell.topleft = mob.rect.bottomleft
+                manager.hitpoint -= 1
+            if manager.hitpoint < 1:
+                manager.game_state = 'stop'
 
     def window_init(self):
         '''
@@ -331,6 +341,12 @@ class LevelTwo():
         for mob in mobs_sprite:
             mob.speed = random.randint(x, y)
 
+    def mobs_move(self):
+        # TODO - сделать что бы мобы двигались по х оси
+        for mob in mobs_sprite:
+            if 0 < mob.rect.y < H:
+                mob.rect.x += random.randint(-2, 2)
+        
 
     def game_timer(self):
         '''
@@ -372,8 +388,9 @@ menu = Menu(manager.window)
 leve2 = LevelTwo()
 
 def main():
+
     while True:
-     manager.run_game()
+        manager.run_game()
             
 if __name__ == '__main__':
     main()
