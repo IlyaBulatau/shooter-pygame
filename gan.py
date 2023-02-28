@@ -3,6 +3,9 @@ import pygame
 from constant import *
 
 class Shell(pygame.sprite.Sprite):
+    '''
+    Класс патрона пушки
+    '''
     
     def __init__(self, pos_x, pos_y):
         super().__init__()
@@ -18,6 +21,9 @@ class Shell(pygame.sprite.Sprite):
             self.kill()
 
 class Gan(pygame.sprite.Sprite):
+    '''
+    Класс пушки
+    '''
 
     def __init__(self):
         super().__init__()
@@ -45,30 +51,11 @@ class Gan(pygame.sprite.Sprite):
         shell = Shell(self.rect.centerx, self.rect.bottom)
         shell_sprite.add(shell)
         
-    def first_model(self):
+    def choice_model(self, num):
         '''
-        Выбирает название файла для смены пушки
+        Выбирает название файла для смены пушки 1
         '''
+        self.image = pygame.image.load(path_to_image.joinpath(model_gun[num]))
+            
 
-        self.image = pygame.image.load(path_to_image.joinpath('gun.jpg'))
-           
-    def second_model(self):
-        '''
-        Выбирает название файла для смены пушки
-        '''
-        self.image = pygame.image.load(path_to_image.joinpath('snake.png'))
-    
-    def third_model(self):
-        '''
-        Выбирает название файла для смены пушки
-        '''
-        self.image = pygame.image.load(path_to_image.joinpath('gun2.jpg'))
-
-    def fourth_model(self):
-        '''
-        Выбирает название файла для смены пушки
-        '''
-        self.image = pygame.image.load(path_to_image.joinpath('gun3.png'))
-        
- 
         

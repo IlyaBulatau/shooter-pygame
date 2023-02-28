@@ -3,11 +3,23 @@ import pygame
 from constant import *
 
 class Menu:
+    '''
+    Класс меню игры
+    '''
 
     def __init__(self, window):
         self.window = window
         self.font = pygame.font.SysFont('arial', 30)
     
+    def menu_main_func(self):
+            '''
+            Вызывает все нужные функции для отображения
+            '''
+            self.show_start_game()
+            self.show_instruction()
+            self.show_change_gun_model()
+            self.show_level_select()
+
     def buttom_back_menu(self):
         '''
         Кнопка Возвращает на главную страницу меню

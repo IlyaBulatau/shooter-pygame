@@ -1,9 +1,13 @@
 import pygame
+
 import random
+
 from constant import W, H, path_to_image
 
 class Mob(pygame.sprite.Sprite):
-    
+    '''
+    Класс мобов-противников
+    '''
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load(path_to_image.joinpath('ship.png'))
